@@ -20,7 +20,9 @@ export class S3StorageService implements StorageService {
 
   constructor() {
     this.s3Client = new S3Client({
-      region: process.env.AWS_REGION || "us-east-1",
+      endpoint: process.env.S3_ENDPOINT,
+      region: "us-east-1",
+      forcePathStyle: false,
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
