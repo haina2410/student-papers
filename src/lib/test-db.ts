@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "./prisma";
 
 export async function testDatabaseConnection() {
@@ -29,11 +30,13 @@ export async function testDatabaseConnection() {
           role: "STUDENT",
         },
       });
-    } catch (error: any) {
-      if (error.code === "P2002") {
-        console.log("✅ CCCD unique constraint working correctly");
-      } else {
-        throw error;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2002") {
+          console.log("✅ CCCD unique constraint working correctly");
+        } else {
+          throw error;
+        }
       }
     }
 

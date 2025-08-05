@@ -47,7 +47,7 @@ export default function RegisterForm() {
       } else {
         setError(result.error || "Registration failed");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsLoading(false);

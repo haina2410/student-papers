@@ -8,9 +8,15 @@ const presignedUrlSchema = z.object({
   fileName: z.string().min(1, "File name is required"),
   fileType: z
     .string()
-    .refine((type) => ALLOWED_FILE_TYPES.includes(type as any), {
-      message: `File type must be one of: ${ALLOWED_FILE_TYPES.join(", ")}`,
-    }),
+    .refine(
+      (type) =>
+        ALLOWED_FILE_TYPES.includes(
+          type as (typeof ALLOWED_FILE_TYPES)[number]
+        ),
+      {
+        message: `File type must be one of: ${ALLOWED_FILE_TYPES.join(", ")}`,
+      }
+    ),
   fileSize: z
     .number()
     .min(1, "File size must be greater than 0")
@@ -47,7 +53,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: "Validation failed", details: z.prettifyError(error) },
         { status: 400 }
       );
     }

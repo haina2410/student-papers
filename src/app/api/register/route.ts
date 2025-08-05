@@ -13,7 +13,7 @@ const registerSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    
+
     // Validate input
     const validatedData = registerSchema.parse(body);
     const { email, password, cccd, name } = validatedData;
@@ -21,10 +21,7 @@ export async function POST(req: NextRequest) {
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { email },
-          { cccd },
-        ],
+        OR: [{ email }, { cccd }],
       },
     });
 
@@ -66,17 +63,16 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { 
+      {
         message: "User registered successfully",
         user,
       },
       { status: 201 }
     );
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: "Validation failed", details: z.prettifyError(error) },
         { status: 400 }
       );
     }

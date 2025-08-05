@@ -46,7 +46,7 @@ export default function LoginForm() {
       } else {
         setError(result.error || "Đăng nhập thất bại");
       }
-    } catch (err) {
+    } catch {
       setError("Lỗi mạng. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);

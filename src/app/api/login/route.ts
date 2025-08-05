@@ -11,7 +11,7 @@ const loginSchema = z.object({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    
+
     // Validate input
     const validatedData = loginSchema.parse(body);
     const { email, password } = validatedData;
@@ -39,19 +39,18 @@ export async function POST(req: NextRequest) {
 
     // Return user data (without password)
     const { password: _, ...userWithoutPassword } = user;
-    
+
     return NextResponse.json(
-      { 
+      {
         message: "Login successful",
         user: userWithoutPassword,
       },
       { status: 200 }
     );
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Validation failed", details: error.errors },
+        { error: "Validation failed", details: error.issues },
         { status: 400 }
       );
     }
