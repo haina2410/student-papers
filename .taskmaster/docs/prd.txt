@@ -1,0 +1,101 @@
+# Project Description
+
+# Overview
+
+Một hệ thống cho các tân sinh viên khoa Công nghệ thông tin chuẩn bị nhập học có thể nộp hồ sơ trước khi vào trường. Ngoài ra cũng cho các giáo viên có thể quản lý trạng thái hồ sơ, và ấn duyệt cho sinh viên.
+
+UX của hệ thống phải cơ bản, tránh nhiều bước phức tạp.
+
+# User Personas
+
+> Mỗi tính năng dưới đây sẽ thuộc về 1 trong 2 loại user sau:
+> 
+> - SV - Sinh viên: người nộp hồ sơ
+> - GV - Giáo viên: Người duyệt hồ sơ; quản lý hệ thống
+
+# Core Features
+
+### [SV] Đăng ký tài khoản
+
+- Cho phép tân sinh viên đăng ký tài khoản để nộp hồ sơ, không cần lưu trữ nhiều metadata (chỉ cần CCCD là unique username, và email để reset password khi cần thiết).
+
+### [SV ]Tải xuống hồ sơ mẫu
+
+- Có một nút tải xuống hồ sơ trên frontend, cho phép tải xuống hồ sơ mẫu để điền.
+
+### [SV] Nộp hồ sơ đã điền
+
+- SV upload hồ sơ đã điền lên hệ thống.
+
+### [SV] Xem trạng thái hồ sơ đã nộp
+
+- Xem trạng thái hồ sơ đã được giáo viên duyệt hay chưa
+
+### [GV] Xem danh sách sinh viên đã nộp dạng bảng
+
+- Có thể tải xuống hồ sơ
+
+### [GV] Xem chi tiết một sinh viên đã nộp
+
+### [GV] Duyệt hồ sơ (chỉnh trạng thái hồ sơ)
+
+# Technical Architecture
+
+> Written in English for better representation
+> 
+
+### General
+
+- Nextjs for frontend and backend
+- pnpm 10.14.0
+- Typescript with eslint
+
+### Frontend
+
+- Style: Tailwind CSS, no styling library needed.
+- Limit upload to under 15MB.
+- [GV] Table optimization for showing many students at once
+
+### Backend
+
+- Prisma ORM with Postgres (will provide connection string in .env)
+- better-auth (read [here](https://raw.githubusercontent.com/better-auth/better-auth/refs/heads/main/docs/content/docs/installation.mdx) for install and read [here](https://raw.githubusercontent.com/better-auth/better-auth/refs/heads/main/docs/content/docs/integrations/next.mdx) for Nextjs integration)
+- The upload service/module should be decoupled enough with the rest, for future moving between services (.e.g we can choose between storing in the server’s filesystem or storing in 3rd services like AWS S3).
+    - For MVP version, use S3 SDK.
+- Clean user inputs from SQL injection.
+
+### Deployment
+
+- No need docker, this will be given to a service (.e.g Vercel) to deploy
+
+## Data models
+
+### User
+
+- The original model from better-auth, including:
+    - cccd (unique, as a better-auth addon, user must provide CCCD while registering)
+
+### File
+
+- To store mapping between user and s3 object id
+
+# Development Roadmap
+
+### Development
+
+- MVP requirements
+    - Authentication with very basic frontend (Frontend styling theme and layout is expected to change in the future):
+        - [SV] Authentication and upload.
+        - [GV] Authentication and a table showing records
+    - Upload service (when you done implementing code, stop and tell me to give you S3 envs)
+    - Use localhost:5432 for local PostgreSQL when development, feel free to purge anytime.
+- Future enhancements:
+    - Missing features
+
+### Optional
+
+- Sentry integration
+
+### Load test
+
+- Give me load test scripts with Grafana k6.

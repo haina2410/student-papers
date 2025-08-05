@@ -1,0 +1,165 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Repository & Configuration",
+        "description": "Initialize the Next.js project repository with pnpm 10.14.0, Typescript, ESLint and Tailwind CSS. Establish project structure and environment configuration.",
+        "details": "Initialize a new Next.js project using the latest Next.js (v13+) with pnpm 10.14.0. Setup TypeScript with a tsconfig.json, configure ESLint with recommended rules, and integrate Tailwind CSS. Create a basic directory structure (pages, components, lib, etc.). Ensure to commit initial files to version control. Recommended versions: Next.js latest stable, Tailwind CSS 3.x, ESLint 8.x.",
+        "testStrategy": "Validate that the project compiles and runs locally. Check that ESLint runs without errors and Tailwind styles load on a sample page.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Configure Database with Prisma and PostgreSQL",
+        "description": "Set up Prisma ORM with PostgreSQL, create models for User and File as per the PRD requirements.",
+        "details": "Install Prisma CLI and client (latest version, e.g. prisma@4.x). Create a schema.prisma file. Define two models: User (using the base model from better-auth with a unique 'cccd' field, email, etc.) and File to map user to S3 object ID. Configure the connection string in a .env file (use localhost:5432 for development). Run migrations to update the database.",
+        "testStrategy": "Test connection to the database with Prisma studio, run a sample query to ensure data insertion and retrieval works without errors. Validate unique constraints on 'cccd'.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Integrate Better-Auth for Authentication",
+        "description": "Configure better-auth in Next.js to handle user registration and authentication, ensuring CCCD is integrated as unique identifier.",
+        "details": "Follow the Better-Auth integration guide for Next.js. Install better-auth (latest version from the provided link) and follow installation steps. Modify the registration flow to include a 'cccd' input field ensuring its uniqueness. Test basic login and registration functionality. Ensure to secure endpoints against SQL injection by sanitizing inputs.",
+        "testStrategy": "Test user registration and login flows through unit tests and manual UI interactions. Validate that the CCCD field behaves as expected and that password reset through email works using a mocked email service.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Student (SV) Registration and Authentication UI",
+        "description": "Develop the frontend pages and API routes for student registration and authentication using Better-Auth integration.",
+        "details": "Create Next.js pages for student sign-up and login. Use Tailwind CSS for styling a minimal but clean UI. Include input validation (client and server side) for fields: cccd, email, password. Use Next.js API routes to handle authentication logic interfacing with better-auth and Prisma. Include pseudo-code for API route: \n\n// Pseudo-code:\n// POST /api/auth/register:\n//    const { cccd, email, password } = req.body;\n//    Validate inputs;\n//    Call better-auth registration function;\n//    Return success response.",
+        "testStrategy": "Manually test the registration process in the browser. Write unit tests for API routes to validate input sanitization, and simulate database insertion.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Develop S3-based File Upload Service Module",
+        "description": "Implement a decoupled file upload service that uses AWS S3 SDK as the backend for file storage with a limit of 15MB per file.",
+        "details": "Create an abstraction for file storage. For MVP, implement using AWS S3 SDK v3. Handle file size validation (15MB max) on the frontend and backend. Wrap S3 operations in a service layer (e.g. an 'uploadService.ts' file) that can be swapped out in future. Code snippet (pseudo-code):\n\n// if(file.size > 15MB) throw error;\n// s3Client.send(new PutObjectCommand({ Bucket, Key, Body: file }));\n\nEnsure proper error handling and logging. Use environment variables for S3 configuration from .env.",
+        "testStrategy": "Write integration tests to upload a file and verify presence in S3 (or a mock S3 service in development). Validate rejection for files >15MB.",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Create Frontend Page for Downloading Sample Form",
+        "description": "Develop a minimal frontend page that provides a download button for a sample form to be filled by students.",
+        "details": "Create a static Next.js page (e.g. /download) using Tailwind CSS for styling. Implement a simple button that triggers file download for a sample form (e.g. a PDF or DOCX stored locally in the public folder). Use an HTML anchor tag with the download attribute. \n\nExample: <a href='/sample-form.pdf' download>Download Sample Form</a>.",
+        "testStrategy": "Verify that clicking the download button retrieves the sample file directly in different browsers. Validate file integrity after download.",
+        "priority": "medium",
+        "dependencies": [
+          1
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Student File Upload UI",
+        "description": "Develop a frontend page where students can upload their completed form and integrate it with the backend upload service.",
+        "details": "Create a Next.js page (e.g., /upload) with an upload form using Tailwind CSS. Use an <input type='file'> element, limit file selection to <15MB files. On submit, make an API call to the file upload endpoint that uses the upload service from Task 5. Include client-side validation for file type and size.",
+        "testStrategy": "Perform manual testing of file upload functionality; use unit tests for API endpoints handling file uploads, and ensure files beyond the limit are rejected.",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Develop Student Application Status Viewing Page",
+        "description": "Create a page that allows students to view the status of their submitted application.",
+        "details": "Implement a Next.js page (e.g., /status) that retrieves and displays the current approval status from the backend via an API endpoint. Use Prisma to query the File record associated with the user. Display statuses such as 'Pending', 'Approved', or 'Rejected'. Provide minimal styling with Tailwind CSS.",
+        "testStrategy": "Unit test the API route for status retrieval, and perform manual UI tests to verify the correct status is displayed for different scenarios.",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Build GV Table View to List Student Submissions",
+        "description": "Develop a GV (Teacher) dashboard page that displays a paginated and optimized table of student submissions with file download functionality.",
+        "details": "Create a Next.js page (e.g., /gv/dashboard) that retrieves a list of student records using Prisma. Implement server-side pagination to optimize data loading. Display the list in a table with details (name, cccd, submission date, status) and include a download button for each submission which triggers a file download using the file mapping from Task 2. Use Tailwind CSS for basic styling.",
+        "testStrategy": "Perform smoke tests for pagination and table data loading. Validate file download links, and ensure table performance with a mocked large dataset.",
+        "priority": "medium",
+        "dependencies": [
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Develop GV Detail View for Individual Student Submission",
+        "description": "Create a detail view page for GV to see comprehensive information about an individual student's application including file details.",
+        "details": "Implement a Next.js dynamic route page (e.g., /gv/student/[id]) that fetches detailed data for a given student using Prisma. Display user details, submission metadata, and provide a download link for the associated file. Ensure input sanitization to protect against injection attacks.",
+        "testStrategy": "Manually test the detail view page by passing valid and invalid identifiers. Write unit tests to confirm safe handling and correct data retrieval.",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement GV Approval Workflow",
+        "description": "Develop the capability for GV to update the approval status of student submissions.",
+        "details": "Create an API endpoint (e.g., PUT /api/approval) that allows GV users to update the status of a student's submission. Provide necessary input validations, and update the corresponding record in the File table. Reflect the updated status on the GV detailed view and student status pages. Pseudo-code:\n\n// Validate request and GV user permissions\n// query Prisma to update status field\n// return updated record",
+        "testStrategy": "Use API tests to ensure only authorized GV users can update statuses. Verify status changes persist in the database and propagate to the UI.",
+        "priority": "medium",
+        "dependencies": [
+          10
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Develop Load Testing and Optional Sentry Integration",
+        "description": "Create load test scripts using Grafana k6 and integrate optional Sentry for error monitoring to ensure system resilience under load.",
+        "details": "Write load testing scripts in k6, simulating multiple student and GV interactions (registration, file upload, data fetching). Document thresholds (e.g. concurrent requests). Optionally, integrate Sentry (latest @sentry/node V7+) into both frontend and backend for error monitoring. Provide clear configuration instructions using DSN from Sentry. \n\nExample of k6 script snippet:\n\nimport http from 'k6/http';\nexport default function () {\n  http.get('http://localhost:3000/api/status');\n}\n",
+        "testStrategy": "Run k6 scripts to simulate load and observe performance metrics using Grafana dashboards. Validate that Sentry catches and logs errors in testing scenarios.",
+        "priority": "low",
+        "dependencies": [
+          11
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-05T17:49:12.601Z",
+      "updated": "2025-08-05T18:02:04.539Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
