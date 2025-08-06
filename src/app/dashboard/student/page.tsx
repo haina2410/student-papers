@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useStudentAuth } from "@/hooks/useAuthorization";
+import { signOut } from "@/lib/auth-client";
 
 interface FileSubmission {
   id: string;
@@ -45,7 +46,7 @@ export default function StudentDashboard() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/sign-out', { method: 'POST' });
+      await signOut();
       router.push('/login');
     } catch (error) {
       console.error('Logout error:', error);
