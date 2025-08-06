@@ -56,7 +56,7 @@ export async function testUploadService() {
       }
     );
 
-    const largeFileData2 = await largeFileResponse.json();
+    const _largeFileData2 = await largeFileResponse.json();
 
     if (largeFileResponse.status === 400) {
       console.log("✅ File size validation working correctly");

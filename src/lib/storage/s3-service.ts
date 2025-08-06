@@ -40,7 +40,6 @@ export class S3StorageService implements StorageService {
     const { fileName, fileType, fileSize, userId } = params;
 
     // Generate unique file key
-    const fileExtension = fileName.split(".").pop() || "";
     const uniqueFileName = `${uuidv4()}-${fileName}`;
     const fileKey = `uploads/${userId}/${uniqueFileName}`;
 

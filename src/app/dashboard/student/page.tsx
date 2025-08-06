@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
@@ -19,18 +19,9 @@ export default function StudentDashboard() {
   const [files, setFiles] = useState<FileSubmission[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/login");
-      return;
-    }
-
-    if (session?.user?.id) {
-      fetchUserFiles();
-    }
-  }, [session, isPending, router]);
-
-  const fetchUserFiles = async () => {
+  const fetchUserFiles = useCallback(async () => {
+    if (!session?.user?.id) return;
+    
     try {
       const response = await fetch(`/api/files/user/${session?.user?.id}`);
       if (response.ok) {
@@ -42,7 +33,18 @@ export default function StudentDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      router.push("/login");
+      return;
+    }
+
+    if (session?.user?.id) {
+      fetchUserFiles();
+    }
+  }, [session, isPending, router, fetchUserFiles]);
 
   const handleLogout = async () => {
     try {
@@ -108,7 +110,7 @@ export default function StudentDashboard() {
                 <span className="font-medium text-gray-700">Email:</span> {session.user?.email}
               </p>
               <p className="text-sm">
-                <span className="font-medium text-gray-700">CCCD:</span> {(session.user as any)?.cccd || 'Chưa cập nhật'}
+                <span className="font-medium text-gray-700">CCCD:</span> {(session.user as { cccd?: string })?.cccd || 'Chưa cập nhật'}
               </p>
               <p className="text-sm">
                 <span className="font-medium text-gray-700">Vai trò:</span> Sinh viên

@@ -107,7 +107,7 @@ export default function DownloadPage() {
           <div className="mt-8 text-center text-sm text-gray-500">
             <p>File format: PDF | File size: ~2KB</p>
             <p className="mt-2">
-              Having trouble downloading? Try right-clicking the button and selecting "Save link as..."
+              Having trouble downloading? Try right-clicking the button and selecting &ldquo;Save link as...&rdquo;
             </p>
           </div>
 

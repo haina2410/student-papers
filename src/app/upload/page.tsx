@@ -426,7 +426,7 @@ export default function UploadPage() {
             </h3>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Don't have the form yet?</h4>
+                <h4 className="font-semibold text-gray-900 mb-2">Don&apos;t have the form yet?</h4>
                 <p className="text-gray-600 text-sm mb-3">
                   Download the sample form template and fill it out before uploading.
                 </p>

@@ -67,6 +67,8 @@ export async function testAuthFlow() {
     });
 
     const duplicateData = await duplicateResponse.json();
+    console.log("Duplicate CCCD response:", duplicateData);
+
     if (duplicateResponse.status === 409) {
       console.log("✅ CCCD uniqueness validation working");
     } else {
