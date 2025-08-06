@@ -154,11 +154,78 @@
         ],
         "status": "pending",
         "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Refactor Frontend Authentication to Fully Align with Better-Auth Best Practices",
+        "description": "Resolve all frontend authentication integration issues by removing legacy localStorage logic, implementing robust session management, and enforcing role-based access using Better-Auth's recommended patterns.",
+        "details": "1. Remove all localStorage-based authentication logic from LoginForm.tsx and any other components, replacing it with Better-Auth's session management via the useSession hook from the better-auth client library (e.g., import { useSession } from 'better-auth/react').\n2. Refactor the login flow to use Better-Auth's session state: after successful login, use the session object to determine user authentication and role, and redirect accordingly (e.g., to /dashboard or /gv/dashboard). Ensure navigation is handled only after session is established and isPending is false.\n3. Implement global session state management by wrapping the app in Better-Auth's provider (if not already done), and ensure all protected components/pages check session state before rendering sensitive UI. Use Next.js middleware (middleware.ts) to enforce route protection and redirect unauthenticated users to /login, following best practices for authentication middleware in Next.js 13+.[2]\n4. Implement role-based redirects and UI gating: after login, check the user's role from the session data and redirect to the appropriate dashboard. In protected pages, render content conditionally based on session and role, showing loading states while isPending is true.\n5. Audit all components that previously relied on localStorage or ad-hoc session checks, updating them to use the Better-Auth session context and hooks exclusively. Remove any redundant or insecure code.\n6. Ensure all API requests from the frontend include credentials (cookies) and handle 401 responses by redirecting to /login as needed.[2]\n7. Follow security best practices: use HttpOnly cookies for session tokens, avoid exposing sensitive data in the client, and ensure all redirects and session checks are server-side where possible.[2]\n8. Document the new authentication flow and update onboarding/readme instructions for frontend developers.",
+        "testStrategy": "1. Manually test the login flow: verify that after successful login, users are redirected to the correct dashboard based on their role, and are not sent back to the login page unless their session expires.\n2. Attempt to access protected routes as an unauthenticated user and confirm redirection to /login. As an authenticated user, confirm access to authorized pages and denial of access to unauthorized ones (e.g., student vs. GV dashboards).\n3. Use unit and integration tests to verify that session state is correctly propagated across components, and that UI is gated behind proper session checks.\n4. Simulate session expiration and ensure the UI responds by redirecting to /login and clearing sensitive state.\n5. Confirm that no authentication data is stored in localStorage or other insecure client-side storage.\n6. Review API requests in browser dev tools to ensure credentials are sent and 401 responses are handled gracefully.\n7. Perform code review to ensure all legacy authentication logic is removed and only Better-Auth session management is used.",
+        "status": "pending",
+        "dependencies": [
+          3
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Remove Legacy localStorage Authentication Logic",
+            "description": "Eliminate all authentication logic that relies on localStorage from LoginForm.tsx and any other components, replacing it with Better-Auth's session management using the useSession hook.",
+            "dependencies": [],
+            "details": "Identify and remove all instances where authentication state is stored or checked via localStorage. Refactor these components to use the useSession hook from better-auth/react for session management, ensuring that authentication state is now derived exclusively from Better-Auth.\n<info added on 2025-08-06T05:11:05.520Z>\nImport signIn and useSession from auth-client in LoginForm.tsx. Remove the localStorage.setItem call and any reliance on localStorage for authentication state. Replace calls to the custom /api/login endpoint with the signIn function to trigger Better-Auth's login flow. Update the login component so that, on a successful login, session management is fully handled via useSession, ensuring that the session is retrieved and user roles are correctly maintained without referencing legacy localStorage logic.\n</info added on 2025-08-06T05:11:05.520Z>\n<info added on 2025-08-06T05:12:45.149Z>\nCompleted the removal of legacy localStorage usage in LoginForm.tsx. The updates include:\n• Removing localStorage.setItem(\"user\", JSON.stringify(result.user))\n• Replacing the custom /api/login fetch with the better-auth signIn.email() method\n• Adding the useSession hook and relocating redirect logic to a useEffect hook\n• Updating imports to include signIn and useSession from auth-client\n• Verifying that no other parts of the codebase rely on localStorage\n\nThe LoginForm now fully utilizes Better-Auth for authentication and session management, with role-based redirects handled after the session loads via useEffect.\n</info added on 2025-08-06T05:12:45.149Z>",
+            "status": "done",
+            "testStrategy": "Verify that no authentication data is stored in localStorage and that session state is correctly managed via Better-Auth hooks. Attempt login and logout flows to confirm correct session handling."
+          },
+          {
+            "id": 2,
+            "title": "Refactor Login Flow and Implement Role-Based Redirects",
+            "description": "Update the login flow to utilize Better-Auth's session state, ensuring users are redirected based on their authenticated role after login, and navigation only occurs after the session is established.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "After successful login, use the session object to determine user authentication and role. Redirect users to the appropriate dashboard (e.g., /dashboard or /gv/dashboard) only after isPending is false. Ensure navigation logic is decoupled from legacy state and fully relies on Better-Auth session data.\n<info added on 2025-08-06T05:13:08.874Z>\nEnsure rigorous testing of the updated login flow by verifying that after a successful login, users are redirected based on their roles using the Better-Auth session state, with navigation occurring only after isPending is false. Test that session state propagates correctly throughout the application. Additionally, review the current dashboard routes to determine if a separate /dashboard/teacher route is necessary, given that only /dashboard/student exists.\n</info added on 2025-08-06T05:13:08.874Z>\n<info added on 2025-08-06T05:17:08.207Z>\nUpdated implementation now reflects the following changes:\n- LoginForm.tsx exclusively uses Better-Auth’s signIn.email() method.\n- Role-based redirects are implemented within a useEffect that waits for !isPending and valid session data.\n- TEACHER users are redirected to the /gv/dashboard placeholder page, while all other users are directed to /dashboard/student.\n- The code has been updated to use the UserRole type for TypeScript, eliminating any usage of 'any'.\n- Navigation now only occurs once the session is fully established, ensuring accurate and secure routing.\n- Error handling has been refined with proper typed error management.\n- The build completes successfully without TypeScript or lint errors.\n</info added on 2025-08-06T05:17:08.207Z>",
+            "status": "done",
+            "testStrategy": "Manually test login with different user roles and confirm redirection to the correct dashboard. Ensure navigation does not occur until session is fully established."
+          },
+          {
+            "id": 3,
+            "title": "Implement Global Session State and Route Protection",
+            "description": "Wrap the application in Better-Auth's provider and enforce route protection using Next.js middleware, ensuring only authenticated users can access protected routes.",
+            "dependencies": [
+              "13.2"
+            ],
+            "details": "Integrate the Better-Auth provider at the app root to provide session context globally. Implement Next.js middleware (middleware.ts) to check session state and redirect unauthenticated users to /login, following Better-Auth and Next.js 13+ best practices.",
+            "status": "pending",
+            "testStrategy": "Attempt to access protected routes as both authenticated and unauthenticated users, verifying correct redirection and access control."
+          },
+          {
+            "id": 4,
+            "title": "Audit and Update All Components for Better-Auth Session Usage",
+            "description": "Review all frontend components that previously used localStorage or ad-hoc session checks, updating them to use Better-Auth session context and hooks exclusively.",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Systematically audit the codebase for any remaining legacy authentication logic. Refactor these components to use the Better-Auth session context, removing redundant or insecure code and ensuring consistent session handling throughout the app.",
+            "status": "pending",
+            "testStrategy": "Run a code search for localStorage and legacy session checks. Confirm all authentication logic now uses Better-Auth hooks and context."
+          },
+          {
+            "id": 5,
+            "title": "Enforce Secure API Requests and Document Authentication Flow",
+            "description": "Ensure all frontend API requests include credentials, handle 401 responses securely, and update documentation to reflect the new authentication flow and onboarding steps.",
+            "dependencies": [
+              "13.4"
+            ],
+            "details": "Update API request logic to always send credentials (cookies), handle 401 Unauthorized responses by redirecting to /login, and follow security best practices (e.g., HttpOnly cookies, no sensitive data exposure). Revise onboarding and README documentation to describe the new authentication flow and developer setup.",
+            "status": "pending",
+            "testStrategy": "Test API requests for correct credential handling and 401 response behavior. Review documentation for completeness and clarity."
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-08-05T17:49:12.601Z",
-      "updated": "2025-08-06T04:34:27.218Z",
+      "updated": "2025-08-06T05:17:15.274Z",
       "description": "Tasks for master context"
     }
   }

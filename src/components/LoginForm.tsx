@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "@/lib/auth-client";
 
 interface LoginFormData {
   email: string;
@@ -16,6 +17,20 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { data: session, isPending } = useSession();
+
+  // Handle redirect after successful login
+  useEffect(() => {
+    if (!isPending && session) {
+      // Redirect based on user role from Better-Auth session
+      const userRole = session.user.role;
+      if (userRole === "TEACHER") {
+        router.push("/gv/dashboard");
+      } else {
+        router.push("/dashboard/student");
+      }
+    }
+  }, [session, isPending, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,31 +38,16 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // Use Better-Auth's signIn method instead of custom API
+      await signIn.email({
+        email: formData.email,
+        password: formData.password,
       });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        // Store user info in localStorage for now (will improve with proper session management)
-        localStorage.setItem("user", JSON.stringify(result.user));
-        
-        // Redirect based on user role
-        if (result.user.role === "TEACHER") {
-          router.push("/dashboard/teacher");
-        } else {
-          router.push("/dashboard/student");
-        }
-      } else {
-        setError(result.error || "Đăng nhập thất bại");
-      }
-    } catch {
-      setError("Lỗi mạng. Vui lòng thử lại.");
+      
+      // No need to handle redirect here - useEffect will handle it
+      // when session updates
+    } catch (error: unknown) {
+      setError((error as Error)?.message || "Đăng nhập thất bại");
     } finally {
       setIsLoading(false);
     }

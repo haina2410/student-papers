@@ -110,7 +110,7 @@ export default function StudentDashboard() {
                 <span className="font-medium text-gray-700">Email:</span> {session.user?.email}
               </p>
               <p className="text-sm">
-                <span className="font-medium text-gray-700">CCCD:</span> {(session.user as { cccd?: string })?.cccd || 'Chưa cập nhật'}
+                <span className="font-medium text-gray-700">CCCD:</span> {session.user?.cccd || 'Chưa cập nhật'}
               </p>
               <p className="text-sm">
                 <span className="font-medium text-gray-700">Vai trò:</span> Sinh viên

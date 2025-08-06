@@ -1,3 +1,5 @@
+import { auth } from "@/lib/auth";
+
 export interface RegisterData {
   email: string;
   password: string;
@@ -12,12 +14,5 @@ export interface LoginData {
 
 export type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  cccd: string;
-  role: UserRole;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type Session = typeof auth.$Infer.Session;
+export type User = Session["user"];

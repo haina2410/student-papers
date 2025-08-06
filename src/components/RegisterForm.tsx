@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signUp } from "@/lib/auth-client";
 
 interface RegisterFormData {
   email: string;
@@ -26,29 +27,28 @@ export default function RegisterForm() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    
+    console.log("Submitting registration:", formData);  
 
     try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
+      // Use Better-Auth's signUp function with all required fields
+      await signUp.email({
+        email: formData.email,
+        password: formData.password,
+        cccd: formData.cccd,
+        name: formData.name,
+      }).then(() => {
         setSuccess(true);
         // Redirect to login page after successful registration
         setTimeout(() => {
           router.push("/login");
         }, 2000);
-      } else {
-        setError(result.error || "Registration failed");
-      }
-    } catch {
-      setError("Network error. Please try again.");
+      }).catch(e => {
+        console.error("Registration error:", e);
+        setError((e as Error)?.message || "Đăng ký thất bại");
+      });
+    } catch (error: unknown) {
+      setError((error as Error)?.message || "Đăng ký thất bại");
     } finally {
       setIsLoading(false);
     }
