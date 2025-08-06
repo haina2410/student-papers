@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "@/lib/auth-client";
+import { useStudentAuth } from "@/hooks/useAuthorization";
 
 interface FileSubmission {
   id: string;
@@ -14,7 +14,7 @@ interface FileSubmission {
 }
 
 export default function StudentDashboard() {
-  const { data: session, isPending } = useSession();
+  const { session, isLoading: isPending } = useStudentAuth();
   const router = useRouter();
   const [files, setFiles] = useState<FileSubmission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,15 +36,12 @@ export default function StudentDashboard() {
   }, [session?.user?.id]);
 
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/login");
-      return;
-    }
-
-    if (session?.user?.id) {
+    // The useStudentAuth hook handles authorization and redirects automatically
+    // We only need to fetch data when we have a valid session
+    if (!isPending && session?.user?.id) {
       fetchUserFiles();
     }
-  }, [session, isPending, router, fetchUserFiles]);
+  }, [session, isPending, fetchUserFiles]);
 
   const handleLogout = async () => {
     try {

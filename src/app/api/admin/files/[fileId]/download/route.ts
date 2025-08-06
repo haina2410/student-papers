@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { storageService } from "@/lib/storage";
+import { verifyAuthorization, UserRole, handleAuthError } from "@/lib/auth-utils";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ fileId: string }> }
 ) {
   try {
-    // Get session and verify teacher role
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-
-    if (!session?.user || session.user.role !== "TEACHER") {
-      return NextResponse.json(
-        { error: "Unauthorized - Teacher access required" },
-        { status: 401 }
-      );
-    }
+    // Verify teacher authorization
+    const _session = await verifyAuthorization(request, UserRole.TEACHER);
 
     const { fileId } = await params;
 
@@ -70,6 +61,15 @@ export async function GET(
     );
   } catch (error) {
     console.error("Error generating download URL:", error);
+    
+    const authError = handleAuthError(error);
+    if (authError.statusCode !== 500) {
+      return NextResponse.json(
+        { error: authError.error, code: authError.code },
+        { status: authError.statusCode }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Failed to generate download URL" },
       { status: 500 }

@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
+import { verifyAuthorization, UserRole, handleAuthError } from "@/lib/auth-utils";
 
 export async function GET(request: NextRequest) {
   try {
-    // Get session and verify teacher role
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-
-    if (!session?.user || session.user.role !== "TEACHER") {
-      return NextResponse.json(
-        { error: "Unauthorized - Teacher access required" },
-        { status: 401 }
-      );
-    }
+    // Verify teacher authorization
+    const _session = await verifyAuthorization(request, UserRole.TEACHER);
 
     // Parse query parameters for pagination
     const { searchParams } = new URL(request.url);
@@ -100,6 +91,15 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     console.error("Error fetching submissions:", error);
+    
+    const authError = handleAuthError(error);
+    if (authError.statusCode !== 500) {
+      return NextResponse.json(
+        { error: authError.error, code: authError.code },
+        { status: authError.statusCode }
+      );
+    }
+    
     return NextResponse.json(
       { error: "Failed to fetch submissions" },
       { status: 500 }

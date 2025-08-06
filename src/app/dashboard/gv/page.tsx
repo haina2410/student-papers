@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession, signOut } from "@/lib/auth-client";
+import { signOut } from "@/lib/auth-client";
+import { useTeacherAuth } from "@/hooks/useAuthorization";
 
 interface User {
   id: string;
@@ -40,7 +41,7 @@ interface SubmissionsResponse {
 }
 
 export default function TeacherDashboard() {
-  const { data: session, isPending } = useSession();
+  const { session, isLoading: isPending } = useTeacherAuth();
   const router = useRouter();
   
   // State for submissions data
@@ -157,23 +158,12 @@ export default function TeacherDashboard() {
   };
 
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push("/login");
-      return;
-    }
-
-    // Check if user is actually a teacher
+    // The useTeacherAuth hook handles authorization and redirects automatically
+    // We only need to fetch data when we have a valid session
     if (!isPending && session) {
-      const userRole = session.user?.role;
-      if (userRole !== "TEACHER") {
-        router.push("/dashboard/student");
-        return;
-      }
-      
-      // Fetch submissions when session is confirmed
       fetchSubmissions(currentPage, statusFilter, searchTerm);
     }
-  }, [session, isPending, router, currentPage, statusFilter, searchTerm]);
+  }, [session, isPending, currentPage, statusFilter, searchTerm]);
 
   const handleLogout = async () => {
     try {

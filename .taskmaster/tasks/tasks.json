@@ -154,11 +154,81 @@
         ],
         "status": "pending",
         "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "Implement Comprehensive Role-Based Authorization Features",
+        "description": "Develop and integrate role-based authorization controls that focus on backend API protection with lightweight middleware for quick session validation and efficient role-based checks within API routes and page components.",
+        "status": "in-progress",
+        "dependencies": [
+          3,
+          9,
+          10
+        ],
+        "priority": "high",
+        "details": "This task involves refactoring the current authorization approach by concentrating on backend-side implementation for improved performance while still ensuring comprehensive security. The updated approach includes: 1) Retaining existing lightweight middleware to perform basic session validations (with sessions populated via Better-Auth from Task 3) for optimal performance; 2) Implementing role-based authorization checks directly within API routes and page components to enforce access restrictions; 3) Creating reusable authorization utility functions for consistent role checking across the application; 4) Adding client-side route guards using React hooks to manage navigation and perform redirection of unauthorized users; 5) Implementing robust error handling mechanisms that return proper 403 responses and clear error messages when access is denied; and 6) Updating navigation menus dynamically to display options based on the user's role.",
+        "testStrategy": "Perform unit tests to verify that the lightweight session middleware is functioning properly and that the reusable authorization utilities correctly enforce role-based restrictions in API routes and page components. Use integration tests to simulate both valid and invalid role access attempts and to verify that unauthorized access results in proper 403 error responses and/or redirections. Test the client-side route guards by attempting navigation to restricted pages and confirming that users are redirected with appropriate feedback. Also, validate that dynamic navigation menus correctly reflect the user’s role.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Refactor Lightweight Session Middleware",
+            "description": "Ensure that the existing lightweight session middleware continues to perform basic session validations using sessions populated via Better-Auth from Task 3. Review and refactor the middleware as needed to maintain optimal performance and reliability.",
+            "dependencies": [],
+            "details": "Audit the current middleware implementation to confirm it correctly validates sessions. Refactor if necessary to ensure it seamlessly integrates with Better-Auth. Add logging and minimal error handling for session validation failures.\n<info added on 2025-08-06T08:14:08.050Z>\nBackend authorization system implementation is complete. The updated components include robust authorization utilities in /lib/auth-utils.ts, featuring a comprehensive UserRole enum, a verifyAuthorization() function, and custom error classes for enhanced error handling. Custom React hooks in /hooks/useAuthorization.ts (useTeacherAuth() and useStudentAuth()) now manage client-side role-based access with automatic redirects and loading state management. API routes such as /api/admin/submissions and /api/admin/files/[fileId]/download have been updated with centralized role-based checks and proper error responses. Teacher and student dashboards leverage these hooks, eliminating manual role checks. All updates have passed TypeScript validation, resolved ESLint warnings, and optimized performance while maintaining minimal and efficient middleware.\n</info added on 2025-08-06T08:14:08.050Z>",
+            "status": "done",
+            "testStrategy": "Write unit tests to simulate valid and invalid session scenarios to ensure the middleware correctly validates sessions without overhead."
+          },
+          {
+            "id": 2,
+            "title": "Integrate Role-Based Checks in API Routes and Page Components",
+            "description": "Embed role-based authorization checks directly within API routes and page components. This step ensures that protected endpoints verify user roles after session validation.",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Within the API route handlers and page components, insert conditional checks that leverage session data to verify if the user holds the necessary role for the requested resource. Structure the code so that the check runs immediately after the session validation executed by the middleware.",
+            "status": "pending",
+            "testStrategy": "Develop integration tests that simulate requests with various roles to endpoints and verify that access is correctly granted or blocked."
+          },
+          {
+            "id": 3,
+            "title": "Develop Reusable Authorization Utility Functions",
+            "description": "Extract common role-checking logic into reusable utility functions to promote consistency across the application. These utilities will be invoked by both backend API routes and potentially by frontend components.",
+            "dependencies": [
+              "13.2"
+            ],
+            "details": "Create functions such as 'checkUserRole' and 'isAuthorized' that accept session information and desired roles, returning a boolean indicating authorization. Ensure the utilities are modular, easily testable, and can be imported into various parts of the application.",
+            "status": "pending",
+            "testStrategy": "Write unit tests for each utility function to validate that they correctly determine user access based on role. Test with a variety of role combinations and edge cases."
+          },
+          {
+            "id": 4,
+            "title": "Implement Client-Side Route Guards with React Hooks",
+            "description": "Develop client-side route guards using React custom hooks to enforce role-based access control. These guards will redirect unauthorized users before the page components render.",
+            "dependencies": [
+              "13.3"
+            ],
+            "details": "Create a custom React hook (e.g., 'useAuthorization') that checks the user’s role from the session or authentication context and performs redirection if necessary. Integrate this hook within page components so that navigation adjustments occur dynamically.",
+            "status": "pending",
+            "testStrategy": "Perform both unit and integration tests by simulating user navigation. Ensure that unauthorized users are redirected properly and that authorized views render as expected."
+          },
+          {
+            "id": 5,
+            "title": "Implement Robust Error Handling and Dynamic Navigation Updates",
+            "description": "Enhance the system with comprehensive error handling for unauthorized access and update the dynamic navigation menus to reflect available options based on user roles.",
+            "dependencies": [
+              "13.2",
+              "13.4"
+            ],
+            "details": "Within API routes, implement robust error handling that returns 403 responses with clear error messages on authorization failure. Update the client-side code to detect these errors and adjust the display of navigation menus dynamically based on the user's role. Ensure that menu options are conditionally rendered using available role data from session validations.",
+            "status": "pending",
+            "testStrategy": "Simulate unauthorized requests and verify that the correct error codes and messages are returned. Use UI tests to validate that navigation menus adapt in real time based on changes to the user’s role."
+          }
+        ]
       }
     ],
     "metadata": {
       "created": "2025-08-05T17:49:12.601Z",
-      "updated": "2025-08-06T07:42:36.452Z",
+      "updated": "2025-08-06T08:14:12.666Z",
       "description": "Tasks for master context"
     }
   }
