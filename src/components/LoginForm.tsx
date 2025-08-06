@@ -25,7 +25,7 @@ export default function LoginForm() {
       // Redirect based on user role from Better-Auth session
       const userRole = session.user.role;
       if (userRole === "TEACHER") {
-        router.push("/gv/dashboard");
+        router.push("/dashboard/gv");
       } else {
         router.push("/dashboard/student");
       }
