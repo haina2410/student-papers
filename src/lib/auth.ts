@@ -3,6 +3,17 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { UserRole } from "../types/auth";
 
+const betterAuthURL = process.env.BETTER_AUTH_URL!;
+const betterAuthSecret = process.env.BETTER_AUTH_SECRET!;
+
+if (!betterAuthSecret) {
+  throw new Error("BETTER_AUTH_SECRET is not set");
+}
+
+if (!betterAuthURL) {
+  throw new Error("BETTER_AUTH_URL is not set");
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
@@ -24,10 +35,10 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: false,
-        defaultValue: "STUDENT" as UserRole,
+        defaultValue: "STUDENT",
         // Extend with validation for role values
         validate: (value: string): value is UserRole => {
-          return ["STUDENT", "TEACHER", "ADMIN"].includes(value as UserRole);
+          return (["STUDENT", "TEACHER", "ADMIN"].includes(value));
         },
       },
     },
@@ -36,6 +47,6 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
-  secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-change-in-production",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  secret: betterAuthSecret,
+  baseURL: betterAuthURL,
 });

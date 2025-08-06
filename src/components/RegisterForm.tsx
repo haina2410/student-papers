@@ -81,7 +81,7 @@ export default function RegisterForm() {
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-white border border-gray-200 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-        Đăng ký sinh viên
+        Đăng ký nộp hồ sơ
       </h1>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,7 +96,7 @@ export default function RegisterForm() {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
             placeholder="Nguyễn Văn A"
           />
         </div>
@@ -112,9 +112,9 @@ export default function RegisterForm() {
             value={formData.cccd}
             onChange={handleChange}
             required
-            pattern="[0-9]{12}"
+            pattern="^\d{9}$|^\d{12}$"
             maxLength={12}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
             placeholder="123456789012"
           />
           <p className="text-xs text-gray-500 mt-1">12 chữ số</p>
@@ -131,7 +131,7 @@ export default function RegisterForm() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
             placeholder="email@example.com"
           />
         </div>
@@ -148,7 +148,7 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
             minLength={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
             placeholder="Tối thiểu 6 ký tự"
           />
         </div>
