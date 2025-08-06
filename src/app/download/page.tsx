@@ -145,10 +145,10 @@ export default function DownloadPage() {
                   Submit your completed form through your student dashboard
                 </p>
                 <Link 
-                  href="/login"
+                  href="/upload"
                   className="inline-block bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-sm font-medium"
                 >
-                  Login to Upload
+                  Upload Your Form
                 </Link>
               </div>
             </div>

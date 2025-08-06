@@ -8,20 +8,20 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">
-              Vietnamese Student Paper Submission
+              Hệ thống nộp hồ sơ sinh viên Việt Nam
             </h1>
             <nav className="flex space-x-4">
               <Link 
                 href="/login" 
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                Login
+                Đăng nhập
               </Link>
               <Link 
                 href="/register" 
                 className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 font-medium"
               >
-                Register
+                Đăng ký
               </Link>
             </nav>
           </div>
@@ -32,11 +32,11 @@ export default function Home() {
       <main className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Submit Your University Documents
+            Nộp hồ sơ đại học của bạn
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Welcome to the official document submission system for new IT students. 
-            Submit your required papers before entering university with our simple and secure platform.
+            Chào mừng đến với hệ thống nộp hồ sơ chính thức cho sinh viên CNTT mới. 
+            Nộp các giấy tờ cần thiết trước khi nhập học đại học với nền tảng đơn giản và bảo mật của chúng tôi.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -47,6 +47,15 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Download Sample Form
+            </Link>
+            <Link
+              href="/upload"
+              className="inline-flex items-center px-8 py-4 bg-purple-600 text-white text-lg font-semibold rounded-lg hover:bg-purple-700 transition-colors duration-200 shadow-lg"
+            >
+              <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+              Upload Your Form
             </Link>
             <Link
               href="/register"
@@ -128,8 +137,8 @@ export default function Home() {
               <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                 4
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Submit & Track</h4>
-              <p className="text-sm text-gray-600">Upload your form and monitor approval status</p>
+              <h4 className="font-semibold text-gray-900 mb-2">Upload & Track</h4>
+              <p className="text-sm text-gray-600">Upload your completed form and monitor approval status</p>
             </div>
           </div>
         </div>

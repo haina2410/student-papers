@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vietnamese Student Paper Submission System",
-  description: "Submit your university documents before enrollment - Official submission system for new IT students",
+  title: "Hệ thống nộp hồ sơ sinh viên Việt Nam",
+  description: "Nộp hồ sơ đại học trước khi nhập học - Hệ thống chính thức cho sinh viên CNTT mới",
 };
 
 export default function RootLayout({
