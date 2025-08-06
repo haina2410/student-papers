@@ -126,8 +126,65 @@
         "dependencies": [
           9
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Next.js Dynamic Route for Student Detail View",
+            "description": "Create a dynamic route page (e.g., /gv/student/[id]) using Next.js App Router conventions to handle requests for individual student submissions.",
+            "dependencies": [],
+            "details": "Set up the folder and file structure for the dynamic route using [id] syntax in the app directory. Ensure the route correctly captures the student ID from the URL and passes it to the page component for data fetching and rendering.",
+            "status": "done",
+            "testStrategy": "Manually navigate to various /gv/student/[id] URLs and verify that the route loads and the ID parameter is accessible in the component."
+          },
+          {
+            "id": 2,
+            "title": "Develop API Endpoint for Fetching Detailed Student Submission Data",
+            "description": "Create a secure API endpoint that retrieves comprehensive student submission data, including user details, submission metadata, and file information, using Prisma.",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Implement the API route to accept a student ID, validate it, and query the database for all relevant details. Ensure the endpoint only returns data if the requester is authorized (GV user).",
+            "status": "done",
+            "testStrategy": "Write unit and integration tests to verify correct data retrieval for valid IDs, proper error handling for invalid or unauthorized requests, and coverage of edge cases."
+          },
+          {
+            "id": 3,
+            "title": "Implement Input Validation and Sanitization for Student ID and API Requests",
+            "description": "Ensure all incoming parameters, especially the student ID, are properly validated and sanitized to prevent injection attacks and other security vulnerabilities.",
+            "dependencies": [
+              "10.2"
+            ],
+            "details": "Apply strict validation rules (e.g., UUID or numeric checks) and sanitize all inputs before using them in database queries or file operations. Use established libraries or custom middleware as appropriate.",
+            "status": "done",
+            "testStrategy": "Write unit tests to confirm that invalid or malicious input is rejected and does not reach the database layer. Perform manual penetration testing for common injection vectors."
+          },
+          {
+            "id": 4,
+            "title": "Integrate File Download Functionality for Submission Files",
+            "description": "Provide a secure download link or button on the detail view page that allows authorized GV users to download the associated submission file from storage (e.g., S3).",
+            "dependencies": [
+              "10.2",
+              "10.3"
+            ],
+            "details": "Implement backend logic to generate secure, time-limited download URLs or proxy file downloads through the API. Ensure only authorized users can access the file and that file paths are not exposed.",
+            "status": "done",
+            "testStrategy": "Test file downloads with valid and invalid permissions, verify that links expire as expected, and confirm that files cannot be accessed by unauthorized users."
+          },
+          {
+            "id": 5,
+            "title": "Build UI Components for GV Detail View with Authorization Controls",
+            "description": "Design and implement the frontend components to display user details, submission metadata, and file download options, ensuring only authorized GV users can access the page.",
+            "dependencies": [
+              "10.1",
+              "10.2",
+              "10.4"
+            ],
+            "details": "Use React and Tailwind CSS to create a clear, accessible layout. Integrate authorization checks (e.g., route guards or session validation) to restrict access. Display error messages for unauthorized or invalid access.",
+            "status": "done",
+            "testStrategy": "Perform manual UI testing for various user roles and states. Write unit tests for component rendering and authorization logic."
+          }
+        ]
       },
       {
         "id": 11,
@@ -159,7 +216,7 @@
         "id": 13,
         "title": "Implement Comprehensive Role-Based Authorization Features",
         "description": "Develop and integrate role-based authorization controls that focus on backend API protection with lightweight middleware for quick session validation and efficient role-based checks within API routes and page components.",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           3,
           9,
@@ -186,7 +243,7 @@
               "13.1"
             ],
             "details": "Within the API route handlers and page components, insert conditional checks that leverage session data to verify if the user holds the necessary role for the requested resource. Structure the code so that the check runs immediately after the session validation executed by the middleware.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Develop integration tests that simulate requests with various roles to endpoints and verify that access is correctly granted or blocked."
           },
           {
@@ -197,7 +254,7 @@
               "13.2"
             ],
             "details": "Create functions such as 'checkUserRole' and 'isAuthorized' that accept session information and desired roles, returning a boolean indicating authorization. Ensure the utilities are modular, easily testable, and can be imported into various parts of the application.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Write unit tests for each utility function to validate that they correctly determine user access based on role. Test with a variety of role combinations and edge cases."
           },
           {
@@ -208,7 +265,7 @@
               "13.3"
             ],
             "details": "Create a custom React hook (e.g., 'useAuthorization') that checks the user’s role from the session or authentication context and performs redirection if necessary. Integrate this hook within page components so that navigation adjustments occur dynamically.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Perform both unit and integration tests by simulating user navigation. Ensure that unauthorized users are redirected properly and that authorized views render as expected."
           },
           {
@@ -220,7 +277,7 @@
               "13.4"
             ],
             "details": "Within API routes, implement robust error handling that returns 403 responses with clear error messages on authorization failure. Update the client-side code to detect these errors and adjust the display of navigation menus dynamically based on the user's role. Ensure that menu options are conditionally rendered using available role data from session validations.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Simulate unauthorized requests and verify that the correct error codes and messages are returned. Use UI tests to validate that navigation menus adapt in real time based on changes to the user’s role."
           }
         ]
@@ -228,7 +285,7 @@
     ],
     "metadata": {
       "created": "2025-08-05T17:49:12.601Z",
-      "updated": "2025-08-06T08:14:12.666Z",
+      "updated": "2025-08-06T08:54:29.545Z",
       "description": "Tasks for master context"
     }
   }
