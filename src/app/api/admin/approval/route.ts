@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyAuthorization, UserRole } from "@/lib/auth-utils";
+import { verifyAuthorization } from "@/lib/auth-utils";
 import { FileStatus } from "@prisma/client";
+import { UserRole } from "@/types/auth";
 
 // Define the request body type
 interface ApprovalRequest {

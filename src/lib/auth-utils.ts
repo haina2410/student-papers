@@ -1,13 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextRequest } from "next/server";
 import type { Session } from "better-auth/types";
-
-// Define user roles enum for type safety
-export enum UserRole {
-  STUDENT = "STUDENT",
-  TEACHER = "TEACHER",
-  ADMIN = "ADMIN"
-}
+import { UserRole } from "@/types/auth";
 
 // Define the session with role information
 export interface AuthSession extends Session {

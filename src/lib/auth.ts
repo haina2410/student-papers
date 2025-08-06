@@ -1,3 +1,4 @@
+import "server-only"
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
@@ -13,6 +14,8 @@ if (!betterAuthSecret) {
 if (!betterAuthURL) {
   throw new Error("BETTER_AUTH_URL is not set");
 }
+
+console.log("This ")
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {

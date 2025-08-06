@@ -12,7 +12,11 @@ export interface LoginData {
   password: string;
 }
 
-export type UserRole = "STUDENT" | "TEACHER" | "ADMIN";
+export enum UserRole {
+  STUDENT = "STUDENT",
+  TEACHER = "TEACHER",
+  ADMIN = "ADMIN",
+}
 
 export type Session = typeof auth.$Infer.Session;
 export type User = Session["user"];

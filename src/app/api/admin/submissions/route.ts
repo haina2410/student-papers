@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { verifyAuthorization, UserRole, handleAuthError } from "@/lib/auth-utils";
+import { verifyAuthorization, handleAuthError } from "@/lib/auth-utils";
+import { UserRole } from "@/types/auth";
 
 export async function GET(request: NextRequest) {
   try {

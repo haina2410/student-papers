@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { UserRole } from "@/lib/auth-utils";
+import { UserRole } from "@/types/auth";
 
 export interface UseAuthorizationOptions {
   requiredRole?: UserRole | UserRole[];
