@@ -21,6 +21,8 @@ interface StudentSubmission {
   s3ObjectId: string;
 }
 
+type FileStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
 export default function StudentDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -29,6 +31,8 @@ export default function StudentDetailPage() {
   const [submission, setSubmission] = useState<StudentSubmission | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [statusUpdateSuccess, setStatusUpdateSuccess] = useState<string | null>(null);
 
   const studentId = params.id as string;
 
@@ -91,6 +95,53 @@ export default function StudentDetailPage() {
     } catch (err) {
       console.error('Error downloading file:', err);
       setError('Failed to download file');
+    }
+  };
+
+  const handleStatusUpdate = async (newStatus: FileStatus) => {
+    if (!submission) return;
+
+    try {
+      setUpdatingStatus(true);
+      setError(null);
+      setStatusUpdateSuccess(null);
+
+      const response = await fetch('/api/admin/approval', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileId: submission.id,
+          status: newStatus,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update status');
+      }
+
+      const _data = await response.json();
+      
+      // Update the local submission state
+      setSubmission(prev => prev ? {
+        ...prev,
+        status: newStatus
+      } : null);
+
+      setStatusUpdateSuccess(`Status successfully updated to ${newStatus}`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setStatusUpdateSuccess(null);
+      }, 3000);
+
+    } catch (err) {
+      console.error('Error updating status:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update status');
+    } finally {
+      setUpdatingStatus(false);
     }
   };
 
@@ -235,13 +286,109 @@ export default function StudentDetailPage() {
               <p className="mt-1 text-lg text-gray-900">{formatDate(submission.uploadedAt)}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-500">Status</label>
+              <label className="block text-sm font-medium text-gray-500">Current Status</label>
               <div className="mt-1">
                 <span className={getStatusBadge(submission.status)}>
                   {submission.status}
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Approval Management Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Approval Management</h2>
+          
+          {/* Success Message */}
+          {statusUpdateSuccess && (
+            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {statusUpdateSuccess}
+              </div>
+            </div>
+          )}
+
+          <p className="text-gray-600 mb-4">
+            Update the approval status for this student submission. Changes will be reflected immediately.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => handleStatusUpdate('PENDING')}
+              disabled={updatingStatus || submission.status === 'PENDING'}
+              className={`inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
+                submission.status === 'PENDING'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : updatingStatus
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+              }`}
+            >
+              {updatingStatus ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
+              ) : (
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+              Set as Pending
+            </button>
+
+            <button
+              onClick={() => handleStatusUpdate('APPROVED')}
+              disabled={updatingStatus || submission.status === 'APPROVED'}
+              className={`inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
+                submission.status === 'APPROVED'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : updatingStatus
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-green-100 text-green-800 hover:bg-green-200'
+              }`}
+            >
+              {updatingStatus ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-600 mr-2"></div>
+              ) : (
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+              Approve Submission
+            </button>
+
+            <button
+              onClick={() => handleStatusUpdate('REJECTED')}
+              disabled={updatingStatus || submission.status === 'REJECTED'}
+              className={`inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors ${
+                submission.status === 'REJECTED'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : updatingStatus
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-red-100 text-red-800 hover:bg-red-200'
+              }`}
+            >
+              {updatingStatus ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-2"></div>
+              ) : (
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+              Reject Submission
+            </button>
+          </div>
+
+          {/* Current Status Info */}
+          <div className="mt-4 p-3 bg-gray-50 rounded-md">
+            <p className="text-sm text-gray-600">
+              <strong>Current Status:</strong> <span className={getStatusBadge(submission.status).replace('px-3 py-1 rounded-full text-sm font-medium', 'font-medium')}>{submission.status}</span>
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Status changes are logged and will be visible to the student in their dashboard.
+            </p>
           </div>
         </div>
 

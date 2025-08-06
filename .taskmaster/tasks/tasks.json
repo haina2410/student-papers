@@ -196,8 +196,62 @@
         "dependencies": [
           10
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and Implement Approval Status Update API Endpoint",
+            "description": "Create a RESTful API endpoint (e.g., PUT /api/approval) that allows GV users to update the approval status (PENDING, APPROVED, REJECTED) of student submissions, following best practices for endpoint naming, HTTP method usage, and error handling.",
+            "dependencies": [],
+            "details": "Ensure the endpoint uses clear, noun-based resource names and adheres to RESTful conventions. Implement proper HTTP status codes and consistent error responses. Document the endpoint for future maintenance and integration.",
+            "status": "done",
+            "testStrategy": "Write unit and integration tests to verify correct status updates, proper HTTP responses, and error handling for invalid requests."
+          },
+          {
+            "id": 2,
+            "title": "Implement Input Validation and Role-Based Authorization",
+            "description": "Integrate comprehensive input validation for status updates and enforce that only authorized GV users can perform approval actions.",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Validate request payloads to ensure only valid status values are accepted. Use existing role-based authorization middleware to restrict access to GV users, leveraging session and role checks as implemented in prior tasks.",
+            "status": "done",
+            "testStrategy": "Create tests to simulate valid and invalid input, and verify that unauthorized users cannot update statuses."
+          },
+          {
+            "id": 3,
+            "title": "Update File Table and Persist Approval Status Changes",
+            "description": "Modify the backend logic to update the status field in the File table when a GV user changes a submission's approval status.",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Use Prisma or the relevant ORM to update the status field atomically. Ensure database transactions are handled safely and that the updated record is returned in the API response.",
+            "status": "done",
+            "testStrategy": "Test database updates for all status transitions and verify that the returned record reflects the new status."
+          },
+          {
+            "id": 4,
+            "title": "Develop UI Components for GV Approval Status Management",
+            "description": "Create or update UI components in the GV detailed view to allow GV users to view and change the approval status of student submissions.",
+            "dependencies": [
+              "11.3"
+            ],
+            "details": "Design intuitive UI controls (e.g., dropdowns or buttons) for status management. Ensure the UI reflects the current status and provides feedback on successful or failed updates.",
+            "status": "done",
+            "testStrategy": "Perform UI tests to confirm status changes are correctly displayed and that user interactions trigger the appropriate API calls."
+          },
+          {
+            "id": 5,
+            "title": "Propagate Status Updates to Student and GV Dashboards",
+            "description": "Ensure that approval status changes are immediately reflected on both the student dashboard and the GV dashboard, keeping all relevant views in sync.",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Update frontend logic to fetch and display the latest status from the backend after any change. Implement real-time updates or polling as needed to maintain consistency across views.",
+            "status": "done",
+            "testStrategy": "Test both dashboards to verify that status changes made by GV users are promptly and accurately reflected for all affected users."
+          }
+        ]
       },
       {
         "id": 12,
@@ -285,7 +339,7 @@
     ],
     "metadata": {
       "created": "2025-08-05T17:49:12.601Z",
-      "updated": "2025-08-06T08:54:29.545Z",
+      "updated": "2025-08-06T09:18:11.923Z",
       "description": "Tasks for master context"
     }
   }

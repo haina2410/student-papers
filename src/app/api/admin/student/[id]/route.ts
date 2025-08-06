@@ -1,30 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyAuthorization, UserRole, handleAuthError } from "@/lib/auth-utils";
+import { verifyAuthorization, UserRole } from "@/lib/auth-utils";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Verify teacher authorization
     const _session = await verifyAuthorization(request, UserRole.TEACHER);
 
-    const { id } = params;
+    const { id } = await params;
 
     // Validate student ID format (basic validation)
     if (!id || typeof id !== 'string' || id.trim() === '') {
       return NextResponse.json(
         { error: "Invalid student ID provided" },
-        { status: 400 }
-      );
-    }
-
-    // Additional validation: check if ID is a valid UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      return NextResponse.json(
-        { error: "Invalid student ID format" },
         { status: 400 }
       );
     }
@@ -37,7 +28,6 @@ export async function GET(
       select: {
         id: true,
         fileName: true,
-        originalName: true,
         fileSize: true,
         mimeType: true,
         uploadedAt: true,
@@ -72,7 +62,7 @@ export async function GET(
         id: submission.id,
         user: submission.user,
         filename: submission.fileName,
-        originalName: submission.originalName,
+        originalName: submission.fileName, // Use fileName as originalName since we don't store original name separately
         fileSize: submission.fileSize,
         mimeType: submission.mimeType,
         uploadedAt: submission.uploadedAt.toISOString(),
@@ -85,7 +75,10 @@ export async function GET(
     
     // Handle authentication errors
     if (error instanceof Error && error.message.includes('authorization')) {
-      return handleAuthError();
+      return NextResponse.json(
+        { error: "Unauthorized access" },
+        { status: 403 }
+      );
     }
 
     // Handle other errors
